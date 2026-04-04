@@ -1,275 +1,214 @@
-
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharmacy Delivery Pro | نظام إدارة التوصيل</title>
-    <!-- Fonts & Icons -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pharmacy Pro | نظام التوصيل الذكي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; }
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .sidebar-item.active { background: #2563eb; color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
-        .card-hover:hover { transform: translateY(-4px); transition: all 0.3s ease; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-        .loader-screen { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .animate-pulse-custom { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        body { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .nav-active { color: #2563eb !important; border-top: 3px solid #2563eb; padding-top: 2px; }
+        .glass-header { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
+        input, select { font-size: 16px !important; } /* يمنع التكبير التلقائي في آيفون */
+        .section-transition { transition: all 0.3s ease-in-out; }
     </style>
 </head>
-<body class="text-slate-800">
+<body class="bg-slate-50 text-slate-900 overflow-x-hidden">
 
     <!-- شاشة التحميل -->
-    <div id="loader" class="loader-screen">
-        <div class="relative">
-            <div class="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-            <i class="fas fa-prescription-bottle-medical absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600 text-xl"></i>
-        </div>
-        <p class="mt-4 font-bold text-slate-600">جاري الاتصال بالسحابة...</p>
+    <div id="loader" class="fixed inset-0 bg-white z-[9999] flex flex-col items-center justify-center">
+        <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <p class="mt-4 font-bold text-blue-600 animate-pulse">جاري التحميل...</p>
     </div>
 
-    <!-- واجهة تسجيل الدخول -->
-    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div class="max-w-md w-full glass p-8 rounded-3xl shadow-2xl border border-white">
-            <div class="text-center mb-8">
-                <div class="inline-flex p-4 rounded-2xl bg-blue-600 text-white shadow-lg mb-4">
-                    <i class="fas fa-truck-fast text-3xl"></i>
+    <!-- واجهة الدخول -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-6 bg-white">
+        <div class="w-full max-w-sm">
+            <div class="text-center mb-10">
+                <div class="w-20 h-20 bg-blue-600 rounded-3xl rotate-12 flex items-center justify-center text-white mx-auto shadow-xl mb-6">
+                    <i class="fas fa-truck-fast text-3xl -rotate-12"></i>
                 </div>
                 <h1 class="text-3xl font-black text-slate-800">فارمسي برو</h1>
-                <p class="text-slate-500 mt-2">نظام إدارة العمليات اللوجستية</p>
+                <p class="text-slate-500 font-bold mt-2 text-sm">نظام إدارة التوصيل المتكامل</p>
             </div>
 
-            <div class="flex p-1 bg-slate-100 rounded-xl mb-6">
-                <button onclick="switchRole('driver')" id="role-driver" class="flex-1 py-2 font-bold rounded-lg bg-white shadow text-blue-600 transition-all">مندوب</button>
-                <button onclick="switchRole('admin')" id="role-admin" class="flex-1 py-2 font-bold rounded-lg text-slate-500 transition-all">المدير</button>
+            <div class="flex bg-slate-100 p-1.5 rounded-2xl mb-8">
+                <button onclick="switchRole('driver')" id="role-driver" class="flex-1 py-3 font-bold rounded-xl bg-white shadow-sm text-blue-600 transition-all">مندوب</button>
+                <button onclick="switchRole('admin')" id="role-admin" class="flex-1 py-3 font-bold rounded-xl text-slate-500 transition-all">مدير</button>
             </div>
 
-            <form id="login-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1">كود المستخدم</label>
-                    <div class="relative">
-                        <i class="fas fa-id-card absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="login-code" required class="w-full pr-11 pl-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="أدخل الكود">
-                    </div>
+            <form id="login-form" class="space-y-5">
+                <div class="space-y-1">
+                    <label class="text-xs font-black text-slate-400 mr-2 uppercase">كود المستخدم</label>
+                    <input type="text" id="login-code" required class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none transition" placeholder="مثلاً: 101">
                 </div>
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1">كلمة المرور</label>
-                    <div class="relative">
-                        <i class="fas fa-lock absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="password" id="login-pass" required class="w-full pr-11 pl-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="••••••••">
-                    </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-black text-slate-400 mr-2 uppercase">كلمة المرور</label>
+                    <input type="password" id="login-pass" required class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-600 outline-none transition" placeholder="••••••••">
                 </div>
-                <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition-all">
-                    تسجيل الدخول
+                <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 active:scale-[0.97] transition-all">
+                    دخول النظام
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- واجهة البرنامج الرئيسية (تظهر بعد الدخول) -->
-    <div id="main-app" class="hidden min-h-screen flex flex-col md:flex-row">
+    <!-- التطبيق الرئيسي -->
+    <div id="main-app" class="hidden min-h-screen pb-24 md:pb-0 md:pr-64">
         
-        <!-- Sidebar -->
-        <aside id="sidebar-admin" class="hidden md:flex w-72 glass border-l border-slate-200 flex-col p-6 sticky top-0 h-screen z-50">
-            <div class="flex items-center gap-3 mb-10 px-2">
-                <div class="bg-blue-600 p-2 rounded-lg text-white"><i class="fas fa-notes-medical"></i></div>
-                <span class="text-xl font-black tracking-tight">لوحة المدير</span>
+        <!-- الهيدر العلوي -->
+        <header class="glass-header sticky top-0 z-40 px-6 h-16 flex items-center justify-between">
+            <h2 id="page-title" class="font-black text-lg text-slate-800">الرئيسية</h2>
+            <div class="flex items-center gap-3">
+                <div class="text-left leading-tight hidden md:block">
+                    <p class="font-bold text-sm" id="user-display-name">المستخدم</p>
+                    <p class="text-[10px] text-slate-400 font-bold" id="user-display-role">لوحة التحكم</p>
+                </div>
+                <button onclick="logout()" class="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                    <i class="fas fa-power-off text-sm"></i>
+                </button>
             </div>
-            
-            <nav class="space-y-2 flex-grow">
-                <button onclick="showSection('admin-dashboard')" class="sidebar-item active w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition">
-                    <i class="fas fa-chart-pie w-5"></i> الرئيسية
-                </button>
-                <button onclick="showSection('admin-orders')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition text-slate-600 hover:bg-slate-50">
-                    <i class="fas fa-box w-5"></i> الطلبات الجارية
-                </button>
-                <button onclick="showSection('admin-drivers')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition text-slate-600 hover:bg-slate-50">
-                    <i class="fas fa-users w-5"></i> فريق المناديب
-                </button>
-                <button onclick="showSection('admin-reports')" class="sidebar-item w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition text-slate-600 hover:bg-slate-50">
-                    <i class="fas fa-file-invoice w-5"></i> الأرشيف
-                </button>
-            </nav>
+        </header>
 
-            <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-500 font-bold hover:bg-red-50 rounded-xl transition mt-auto">
-                <i class="fas fa-right-from-bracket"></i> تسجيل الخروج
-            </button>
+        <!-- التنقل الجانبي (للحاسوب فقط) -->
+        <aside id="desktop-nav" class="hidden md:flex fixed right-0 top-0 bottom-0 w-64 bg-white border-l flex-col p-6 z-50">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="bg-blue-600 text-white p-2 rounded-lg"><i class="fas fa-staff-snake"></i></div>
+                <span class="font-black text-xl">لوحة الإدارة</span>
+            </div>
+            <nav id="admin-nav-items" class="space-y-2">
+                <!-- الروابط يتم التحكم بها برمجياً -->
+            </nav>
         </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 p-4 md:p-8 overflow-x-hidden">
+        <!-- التنقل السفلي (للهاتف فقط) -->
+        <nav id="mobile-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center h-16 z-50 safe-area-bottom">
+            <!-- سيتم توليد الروابط حسب الرول -->
+        </nav>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="p-6">
             
-            <!-- Header Mobile -->
-            <header class="flex md:hidden justify-between items-center mb-6">
-                <h2 class="text-xl font-black" id="mobile-title">الرئيسية</h2>
-                <button onclick="logout()" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-red-500">
-                    <i class="fas fa-power-off"></i>
-                </button>
-            </header>
+            <!-- أقسام المدير -->
+            <div id="admin-sections" class="hidden space-y-6">
+                
+                <!-- الإحصائيات -->
+                <section id="sec-admin-dash" class="hidden space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white p-5 rounded-3xl border border-slate-100 card-shadow">
+                            <i class="fas fa-boxes-packing text-blue-600 mb-3 block text-xl"></i>
+                            <span class="text-2xl font-black block" id="stat-pending">0</span>
+                            <span class="text-xs font-bold text-slate-400 uppercase">قيد التجهيز</span>
+                        </div>
+                        <div class="bg-white p-5 rounded-3xl border border-slate-100 card-shadow">
+                            <i class="fas fa-motorcycle text-orange-500 mb-3 block text-xl"></i>
+                            <span class="text-2xl font-black block" id="stat-out">0</span>
+                            <span class="text-xs font-bold text-slate-400 uppercase">خارج للتوصيل</span>
+                        </div>
+                    </div>
+                    <div class="bg-blue-600 p-6 rounded-[2rem] text-white shadow-xl flex items-center justify-between">
+                        <div>
+                            <h3 class="font-black text-xl">إضافة طلب سريع</h3>
+                            <p class="text-xs opacity-80 mt-1 font-bold">سجل بيانات الفاتورة والمندوب</p>
+                        </div>
+                        <button onclick="changeSection('sec-admin-orders')" class="w-12 h-12 bg-white text-blue-600 rounded-2xl flex items-center justify-center shadow-lg"><i class="fas fa-plus"></i></button>
+                    </div>
+                </section>
 
-            <!-- Admin Section: Dashboard -->
-            <section id="admin-dashboard" class="space-y-6 hidden">
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 card-hover">
-                        <div class="text-blue-600 mb-2"><i class="fas fa-clock-rotate-left text-2xl"></i></div>
-                        <div class="text-3xl font-black" id="stat-pending">0</div>
-                        <div class="text-slate-500 text-sm font-bold">انتظار المندوب</div>
-                    </div>
-                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 card-hover">
-                        <div class="text-orange-500 mb-2"><i class="fas fa-motorcycle text-2xl"></i></div>
-                        <div class="text-3xl font-black" id="stat-out">0</div>
-                        <div class="text-slate-500 text-sm font-bold">في الطريق</div>
-                    </div>
-                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 card-hover">
-                        <div class="text-green-600 mb-2"><i class="fas fa-circle-check text-2xl"></i></div>
-                        <div class="text-3xl font-black" id="stat-done">0</div>
-                        <div class="text-slate-500 text-sm font-bold">اكتمل اليوم</div>
-                    </div>
-                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 card-hover">
-                        <div class="text-indigo-600 mb-2"><i class="fas fa-user-check text-2xl"></i></div>
-                        <div class="text-3xl font-black" id="stat-online">0</div>
-                        <div class="text-slate-500 text-sm font-bold">مناديب نشطون</div>
-                    </div>
-                </div>
-
-                <div class="bg-blue-600 p-8 rounded-[2rem] text-white shadow-xl shadow-blue-100 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div>
-                        <h3 class="text-2xl font-black mb-2">إرسال طلب جديد سريع</h3>
-                        <p class="text-blue-100 font-bold opacity-80">أدخل بيانات العميل واختر المندوب المتاح حالياً</p>
-                    </div>
-                    <button onclick="showSection('admin-orders')" class="bg-white text-blue-600 px-8 py-3 rounded-2xl font-black shadow-lg active:scale-95 transition">
-                        تسجيل أوردر الآن
-                    </button>
-                </div>
-            </section>
-
-            <!-- Admin Section: Orders (Add & View) -->
-            <section id="admin-orders" class="space-y-6 hidden">
-                <div class="flex flex-col lg:flex-row gap-6">
-                    <!-- Form -->
-                    <div class="lg:w-1/3 glass p-6 rounded-3xl border border-slate-100 h-fit">
-                        <h3 class="text-xl font-black mb-6 flex items-center gap-2">
-                            <i class="fas fa-plus-circle text-blue-600"></i> إضافة أوردر
-                        </h3>
-                        <form id="order-form" class="space-y-4">
-                            <input type="text" id="ord-no" placeholder="رقم الفاتورة" required class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-blue-500 transition">
-                            <input type="number" id="ord-val" placeholder="المبلغ (ج.م)" required class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-blue-500 transition">
-                            <input type="text" id="ord-cust" placeholder="اسم العميل" required class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-blue-500 transition">
-                            <input type="tel" id="ord-phone" placeholder="رقم الهاتف" required class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-blue-500 transition">
-                            <select id="ord-driver" required class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 outline-none focus:border-blue-500 transition font-bold text-blue-600">
+                <!-- إدارة الطلبات -->
+                <section id="sec-admin-orders" class="hidden space-y-6">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                        <h3 class="font-black mb-4"><i class="fas fa-pen-to-square text-blue-600 ml-2"></i> تسجيل أوردر</h3>
+                        <form id="form-add-order" class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="text" id="ord-no" placeholder="رقم الفاتورة" required class="w-full p-3.5 bg-slate-50 rounded-xl border-none outline-none font-bold">
+                                <input type="number" id="ord-val" placeholder="المبلغ" required class="w-full p-3.5 bg-slate-50 rounded-xl border-none outline-none font-bold">
+                            </div>
+                            <input type="text" id="ord-cust" placeholder="اسم العميل" required class="w-full p-3.5 bg-slate-50 rounded-xl border-none outline-none font-bold">
+                            <input type="tel" id="ord-phone" placeholder="رقم الهاتف" required class="w-full p-3.5 bg-slate-50 rounded-xl border-none outline-none font-bold">
+                            <select id="ord-driver" required class="w-full p-3.5 bg-slate-50 rounded-xl border-none outline-none font-black text-blue-600">
                                 <option value="">-- اختر المندوب --</option>
                             </select>
-                            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-black shadow-lg">حفظ وإرسال</button>
+                            <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black">إرسال للمندوب</button>
                         </form>
                     </div>
-                    <!-- List -->
-                    <div class="lg:w-2/3 space-y-4">
-                        <h3 class="text-xl font-black">الطلبات النشطة حالياً</h3>
-                        <div id="active-orders-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- الطلبات تظهر هنا -->
-                        </div>
+                    <div id="active-list" class="space-y-3 pb-10">
+                        <!-- الطلبات تظهر هنا -->
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Admin Section: Drivers -->
-            <section id="admin-drivers" class="space-y-6 hidden">
-                <div class="flex flex-col lg:flex-row gap-6">
-                    <div class="lg:w-1/3 glass p-6 rounded-3xl border border-slate-100 h-fit">
-                        <h3 class="text-xl font-black mb-6">توظيف مندوب جديد</h3>
-                        <form id="driver-form" class="space-y-4">
-                            <input type="text" id="dr-name" placeholder="الاسم الكامل" required class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 outline-none transition">
-                            <input type="text" id="dr-code" placeholder="كود الدخول (مثلاً: 101)" required class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 outline-none transition">
-                            <input type="password" id="dr-pass" placeholder="كلمة المرور" required class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 outline-none transition">
-                            <input type="tel" id="dr-phone" placeholder="رقم الموبايل" required class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 outline-none transition">
-                            <button type="submit" class="w-full bg-slate-800 text-white py-3 rounded-xl font-black shadow-lg">إضافة المندوب</button>
+                <!-- إدارة المناديب -->
+                <section id="sec-admin-drivers" class="hidden space-y-6">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100">
+                        <h3 class="font-black mb-4">إضافة مندوب للنظام</h3>
+                        <form id="form-add-driver" class="space-y-3">
+                            <input type="text" id="dr-name" placeholder="اسم المندوب" required class="w-full p-3.5 bg-slate-50 rounded-xl border-none outline-none">
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="text" id="dr-code" placeholder="الكود" required class="w-full p-3.5 bg-slate-50 rounded-xl border-none outline-none">
+                                <input type="password" id="dr-pass" placeholder="كلمة المرور" required class="w-full p-3.5 bg-slate-50 rounded-xl border-none outline-none">
+                            </div>
+                            <input type="tel" id="dr-phone" placeholder="رقم الموبايل" required class="w-full p-3.5 bg-slate-50 rounded-xl border-none outline-none">
+                            <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black">حفظ المندوب</button>
                         </form>
                     </div>
-                    <div class="lg:w-2/3 bg-white rounded-3xl shadow-sm border overflow-hidden">
-                        <table class="w-full text-right">
-                            <thead class="bg-slate-50 border-b">
-                                <tr class="text-slate-500 text-sm font-bold">
-                                    <th class="p-4">المندوب</th>
-                                    <th class="p-4">الكود</th>
-                                    <th class="p-4">الحالة</th>
-                                    <th class="p-4">أخر حضور</th>
-                                    <th class="p-4"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="drivers-list-table" class="divide-y"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
+                    <div id="drivers-list" class="space-y-3"></div>
+                </section>
 
-            <!-- Admin Section: Reports -->
-            <section id="admin-reports" class="space-y-6 hidden">
-                <div class="bg-white rounded-3xl shadow-sm border overflow-hidden">
-                    <div class="p-6 border-b flex justify-between items-center">
-                        <h2 class="text-xl font-black">أرشيف الطلبات المكتملة</h2>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right text-sm">
-                            <thead>
-                                <tr class="bg-slate-50 border-b text-slate-500 font-bold">
-                                    <th class="p-4">رقم الفاتورة</th>
-                                    <th class="p-4">المندوب</th>
-                                    <th class="p-4">القيمة</th>
-                                    <th class="p-4">الحالة</th>
-                                    <th class="p-4">الوقت المستغرق</th>
-                                    <th class="p-4">الموقع</th>
-                                </tr>
-                            </thead>
-                            <tbody id="archive-list-table" class="divide-y"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
+                <!-- التقارير -->
+                <section id="sec-admin-reports" class="hidden space-y-4">
+                    <h3 class="font-black">سجل العمليات المكتملة</h3>
+                    <div id="reports-list" class="space-y-3 pb-10"></div>
+                </section>
+            </div>
 
-            <!-- Driver Interface -->
-            <section id="driver-app" class="hidden space-y-6">
-                <!-- Status Card -->
-                <div id="driver-status-card" class="bg-white p-6 rounded-[2rem] shadow-xl border-2 border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div class="flex items-center gap-4">
-                        <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl">
-                            <i class="fas fa-user-tie"></i>
+            <!-- أقسام المندوب -->
+            <div id="driver-sections" class="hidden space-y-6">
+                <!-- البطاقة الشخصية -->
+                <section id="sec-driver-dash" class="space-y-6">
+                    <div class="bg-white p-6 rounded-[2rem] border border-slate-100 card-shadow text-center">
+                        <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-4">
+                            <i class="fas fa-user-circle"></i>
                         </div>
-                        <div class="text-center md:text-right">
-                            <h2 class="text-2xl font-black" id="curr-driver-name">جاري التحميل...</h2>
-                            <p class="text-slate-500 font-bold" id="curr-driver-status">الحالة: غير متاح</p>
-                        </div>
+                        <h3 class="text-2xl font-black" id="d-name-info">...</h3>
+                        <p class="text-slate-400 font-bold text-sm mb-6" id="d-status-text">الحالة: غير متصل</p>
+                        <button id="btn-driver-status" class="w-full py-4 rounded-2xl font-black text-lg shadow-xl transition-all active:scale-95">
+                            تسجيل حضور
+                        </button>
                     </div>
-                    <button id="btn-toggle-attendance" class="px-10 py-4 rounded-2xl font-black text-lg transition-all active:scale-95 shadow-xl">
-                        تسجيل حضور
-                    </button>
-                </div>
 
-                <div class="space-y-4">
-                    <h3 class="text-xl font-black flex items-center gap-2">
-                        <i class="fas fa-route text-blue-600"></i> مهام التوصيل الخاصة بك
-                    </h3>
-                    <div id="driver-tasks-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- مهام المندوب تظهر هنا -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between px-2">
+                            <h3 class="font-black text-lg">الأوردرات المكلف بها</h3>
+                            <span id="task-count" class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-black">0</span>
+                        </div>
+                        <div id="driver-tasks" class="space-y-4 pb-10"></div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
 
         </main>
     </div>
 
-    <!-- Notification Container -->
-    <div id="toast-box" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+    <!-- توست الإشعارات -->
+    <div id="toast" class="fixed top-6 left-6 right-6 z-[999] transform -translate-y-24 transition-all duration-500 pointer-events-none">
+        <div class="bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3">
+            <i id="toast-icon" class="fas fa-info-circle text-blue-400"></i>
+            <span id="toast-msg" class="font-bold text-sm"></span>
+        </div>
+    </div>
 
-    <!-- Firebase Scripts -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // 1. Firebase Configuration
+        // تكوين فيربيز
         const firebaseConfig = {
             databaseURL: "https://delivery-man-cd27a-default-rtdb.firebaseio.com/",
             projectId: "delivery-man-cd27a"
@@ -277,220 +216,256 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // 2. State Management
-        let appState = {
+        let state = {
             role: 'driver',
-            currentUser: null,
+            user: null,
             drivers: {},
-            orders: {}
+            orders: {},
+            currentSection: ''
         };
 
-        // 3. UI Interactions
+        // إدارة واجهة الدخول
         function switchRole(role) {
-            appState.role = role;
-            const btnDriver = document.getElementById('role-driver');
-            const btnAdmin = document.getElementById('role-admin');
+            state.role = role;
+            const drBtn = document.getElementById('role-driver');
+            const adBtn = document.getElementById('role-admin');
+            const inputCode = document.getElementById('login-code');
+
             if(role === 'admin') {
-                btnAdmin.className = "flex-1 py-2 font-bold rounded-lg bg-white shadow text-blue-600 transition-all";
-                btnDriver.className = "flex-1 py-2 font-bold rounded-lg text-slate-500 transition-all";
-                document.getElementById('login-code').placeholder = "أدخل 'admin'";
+                adBtn.className = "flex-1 py-3 font-bold rounded-xl bg-white shadow-sm text-blue-600 transition-all";
+                drBtn.className = "flex-1 py-3 font-bold rounded-xl text-slate-500 transition-all";
+                inputCode.placeholder = "admin";
             } else {
-                btnDriver.className = "flex-1 py-2 font-bold rounded-lg bg-white shadow text-blue-600 transition-all";
-                btnAdmin.className = "flex-1 py-2 font-bold rounded-lg text-slate-500 transition-all";
-                document.getElementById('login-code').placeholder = "كود المندوب";
+                drBtn.className = "flex-1 py-3 font-bold rounded-xl bg-white shadow-sm text-blue-600 transition-all";
+                adBtn.className = "flex-1 py-3 font-bold rounded-xl text-slate-500 transition-all";
+                inputCode.placeholder = "كود المندوب";
             }
         }
 
-        function showSection(id) {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
+        document.getElementById('login-form').onsubmit = e => {
+            e.preventDefault();
+            const code = document.getElementById('login-code').value;
+            const pass = document.getElementById('login-pass').value;
+
+            if(state.role === 'admin') {
+                if(code === 'admin' && pass === '123') startApp('admin', { name: 'المدير' });
+                else showToast('بيانات الدخول غير صحيحة', 'fa-error');
+            } else {
+                const found = Object.entries(state.drivers).find(([id, d]) => d.code === code && d.password === pass);
+                if(found) startApp('driver', { id: found[0], ...found[1] });
+                else showToast('الكود أو كلمة المرور خطأ', 'fa-error');
+            }
+        };
+
+        function startApp(role, userData) {
+            state.user = userData;
+            state.role = role;
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('user-display-name').innerText = userData.name;
+            document.getElementById('user-display-role').innerText = role === 'admin' ? 'مدير النظام' : 'مندوب توصيل';
             
-            // Update sidebar state
-            document.querySelectorAll('.sidebar-item').forEach(btn => {
-                btn.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-lg');
-                btn.classList.add('text-slate-600');
+            buildNav();
+            changeSection(role === 'admin' ? 'sec-admin-dash' : 'sec-driver-dash');
+            if(role === 'driver') updateDriverProfileUI();
+            showToast(`مرحباً بك ${userData.name}`);
+        }
+
+        function buildNav() {
+            const mobileNav = document.getElementById('mobile-nav');
+            const desktopNav = document.getElementById('admin-nav-items');
+            mobileNav.innerHTML = '';
+            desktopNav.innerHTML = '';
+
+            const navs = state.role === 'admin' ? [
+                { id: 'sec-admin-dash', icon: 'fa-chart-pie', label: 'الرئيسية' },
+                { id: 'sec-admin-orders', icon: 'fa-box', label: 'الطلبات' },
+                { id: 'sec-admin-drivers', icon: 'fa-users', label: 'المناديب' },
+                { id: 'sec-admin-reports', icon: 'fa-history', label: 'الأرشيف' }
+            ] : [
+                { id: 'sec-driver-dash', icon: 'fa-house-user', label: 'الرئيسية' }
+            ];
+
+            navs.forEach(nav => {
+                // Mobile
+                const mBtn = document.createElement('button');
+                mBtn.onclick = () => changeSection(nav.id);
+                mBtn.className = `flex flex-col items-center justify-center w-full h-full text-slate-400 nav-btn-${nav.id}`;
+                mBtn.innerHTML = `<i class="fas ${nav.icon} text-xl"></i><span class="text-[10px] font-black mt-1">${nav.label}</span>`;
+                mobileNav.appendChild(mBtn);
+
+                // Desktop
+                const dBtn = document.createElement('button');
+                dBtn.onclick = () => changeSection(nav.id);
+                dBtn.className = `w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-slate-600 transition hover:bg-slate-50 nav-btn-d-${nav.id}`;
+                dBtn.innerHTML = `<i class="fas ${nav.icon} w-5"></i> ${nav.label}`;
+                desktopNav.appendChild(dBtn);
             });
-            const activeBtn = Array.from(document.querySelectorAll('.sidebar-item')).find(b => b.getAttribute('onclick').includes(id));
-            if(activeBtn) {
-                activeBtn.classList.add('active');
-                activeBtn.classList.remove('text-slate-600');
-                document.getElementById('mobile-title').innerText = activeBtn.innerText;
+        }
+
+        function changeSection(id) {
+            state.currentSection = id;
+            document.querySelectorAll('main section, #admin-sections, #driver-sections').forEach(s => s.classList.add('hidden'));
+            
+            const target = document.getElementById(id);
+            if(target) {
+                target.classList.remove('hidden');
+                target.parentElement.classList.remove('hidden');
             }
+
+            // Update Nav UI
+            document.querySelectorAll('#mobile-nav button, #admin-nav-items button').forEach(b => b.classList.remove('nav-active', 'text-blue-600', 'bg-blue-50'));
+            document.querySelectorAll(`.nav-btn-${id}`).forEach(b => b.classList.add('nav-active'));
+            document.querySelectorAll(`.nav-btn-d-${id}`).forEach(b => {
+                b.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+                b.classList.remove('text-slate-600', 'hover:bg-slate-50');
+            });
+
+            const labels = { 'sec-admin-dash': 'الرئيسية', 'sec-admin-orders': 'الطلبات الجارية', 'sec-admin-drivers': 'فريق العمل', 'sec-admin-reports': 'الأرشيف المكتمل', 'sec-driver-dash': 'مهامي اليومية' };
+            document.getElementById('page-title').innerText = labels[id] || 'النظام';
+            window.scrollTo(0,0);
         }
 
-        function notify(msg, type = 'success') {
-            const box = document.getElementById('toast-box');
-            const toast = document.createElement('div');
-            const colors = {
-                success: 'bg-green-600',
-                error: 'bg-red-600',
-                info: 'bg-blue-600'
-            };
-            toast.className = `${colors[type]} text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-500 translate-x-10 opacity-0 pointer-events-auto`;
-            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-circle-exclamation'}"></i> <span class="font-bold">${msg}</span>`;
-            box.appendChild(toast);
-            setTimeout(() => { toast.classList.remove('translate-x-10', 'opacity-0'); }, 100);
-            setTimeout(() => {
-                toast.classList.add('translate-x-10', 'opacity-0');
-                setTimeout(() => toast.remove(), 500);
-            }, 4000);
+        // إشعارات التوست
+        function showToast(msg, icon = 'fa-info-circle') {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            document.getElementById('toast-icon').className = `fas ${icon} text-blue-400`;
+            t.classList.remove('-translate-y-24');
+            setTimeout(() => t.classList.add('-translate-y-24'), 3000);
         }
 
-        // 4. Data Binding & Rendering
+        // قاعدة البيانات والمزامنة
         db.ref('drivers').on('value', snap => {
-            appState.drivers = snap.val() || {};
-            renderDrivers();
-            updateDriverSelect();
-            if(appState.currentUser && appState.role === 'driver') {
-                appState.currentUser = { id: appState.currentUser.id, ...appState.drivers[appState.currentUser.id] };
-                updateDriverAppUI();
+            state.drivers = snap.val() || {};
+            if(state.user && state.role === 'driver') {
+                state.user = { id: state.user.id, ...state.drivers[state.user.id] };
+                updateDriverProfileUI();
             }
+            renderAdminDrivers();
+            updateOrderDriversSelect();
             document.getElementById('loader').classList.add('hidden');
         });
 
         db.ref('orders').on('value', snap => {
-            appState.orders = snap.val() || {};
-            renderAdminDashboard();
-            renderActiveOrders();
-            renderArchive();
+            state.orders = snap.val() || {};
+            renderStats();
+            renderAdminOrders();
+            renderReports();
             renderDriverTasks();
         });
 
-        function renderDrivers() {
-            const tbody = document.getElementById('drivers-list-table');
-            tbody.innerHTML = '';
-            let onlineCount = 0;
-            Object.entries(appState.drivers).forEach(([id, d]) => {
-                if(d.status === 'online') onlineCount++;
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="p-4 font-bold">${d.name}</td>
-                        <td class="p-4 font-mono text-slate-500">${d.code}</td>
-                        <td class="p-4">
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${d.status === 'online' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}">
-                                <span class="status-dot ${d.status === 'online' ? 'bg-green-500 animate-pulse' : 'bg-slate-400'}"></span>
-                                ${d.status === 'online' ? 'متاح' : 'أوفلاين'}
-                            </span>
-                        </td>
-                        <td class="p-4 text-xs font-bold text-slate-400">${d.lastIn ? new Date(d.lastIn).toLocaleTimeString('ar-EG') : '--'}</td>
-                        <td class="p-4 text-left">
-                            <button onclick="deleteDriver('${id}')" class="text-slate-300 hover:text-red-500 transition"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-            document.getElementById('stat-online').innerText = onlineCount;
+        function renderStats() {
+            const obs = Object.values(state.orders);
+            document.getElementById('stat-pending').innerText = obs.filter(o => o.status === 'pending').length;
+            document.getElementById('stat-out').innerText = obs.filter(o => o.status === 'out').length;
         }
 
-        function updateDriverSelect() {
-            const select = document.getElementById('ord-driver');
-            select.innerHTML = '<option value="">-- اختر المندوب --</option>';
-            Object.entries(appState.drivers).forEach(([id, d]) => {
-                if(d.status === 'online') {
-                    select.innerHTML += `<option value="${id}">${d.name}</option>`;
-                }
-            });
-        }
-
-        function renderAdminDashboard() {
-            const orders = Object.values(appState.orders);
-            document.getElementById('stat-pending').innerText = orders.filter(o => o.status === 'pending').length;
-            document.getElementById('stat-out').innerText = orders.filter(o => o.status === 'out').length;
-            document.getElementById('stat-done').innerText = orders.filter(o => o.status === 'delivered' && new Date(o.deliveredAt).toDateString() === new Date().toDateString()).length;
-        }
-
-        function renderActiveOrders() {
-            const container = document.getElementById('active-orders-list');
-            container.innerHTML = '';
-            Object.entries(appState.orders).forEach(([id, o]) => {
+        function renderAdminOrders() {
+            const list = document.getElementById('active-list');
+            list.innerHTML = '';
+            Object.entries(state.orders).forEach(([id, o]) => {
                 if(o.status === 'pending' || o.status === 'out') {
-                    container.innerHTML += `
-                        <div class="bg-white p-5 rounded-3xl shadow-sm border-r-4 ${o.status === 'pending' ? 'border-amber-400' : 'border-blue-500'} card-hover">
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="text-xs font-black uppercase tracking-wider ${o.status === 'pending' ? 'text-amber-600' : 'text-blue-600'}">
-                                    ${o.status === 'pending' ? 'بانتظار المندوب' : 'في الطريق'}
-                                </span>
-                                <div class="text-xl font-black text-blue-600">${o.value} ج.م</div>
-                            </div>
-                            <h4 class="font-black text-lg mb-2">#${o.orderNo} - ${o.customer}</h4>
-                            <div class="text-sm text-slate-500 font-bold space-y-1">
-                                <div class="flex items-center gap-2"><i class="fas fa-phone-flip text-slate-300"></i> ${o.phone}</div>
-                                <div class="flex items-center gap-2"><i class="fas fa-motorcycle text-slate-300"></i> ${o.driverName}</div>
-                            </div>
-                            ${o.status === 'pending' ? `
-                                <button onclick="updateOrderStatus('${id}', 'out')" class="w-full mt-4 bg-blue-600 text-white py-2.5 rounded-xl font-black text-sm active:scale-95 transition">
-                                    تأكيد خروج المندوب
-                                </button>
-                            ` : `
-                                <div class="mt-4 p-2 bg-blue-50 rounded-xl text-blue-700 text-center font-bold text-xs">
-                                    خرج في: ${new Date(o.outAt).toLocaleTimeString('ar-EG')}
+                    list.innerHTML += `
+                        <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between">
+                            <div class="flex-grow">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xs font-black px-2 py-0.5 rounded-lg ${o.status === 'pending' ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600'}">
+                                        ${o.status === 'pending' ? 'بالصيدلية' : 'في الطريق'}
+                                    </span>
+                                    <h4 class="font-black text-slate-800">#${o.orderNo}</h4>
                                 </div>
-                            `}
+                                <p class="text-sm font-bold text-slate-500">${o.customer} • ${o.value} ج.م</p>
+                                <p class="text-[10px] font-bold text-slate-400 mt-1"><i class="fas fa-motorcycle ml-1"></i> ${o.driverName}</p>
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                ${o.status === 'pending' ? `
+                                    <button onclick="updateOrderStatus('${id}', 'out')" class="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"><i class="fas fa-truck-arrow-right"></i></button>
+                                ` : ''}
+                                <button onclick="deleteOrder('${id}')" class="bg-red-50 text-red-500 w-10 h-10 rounded-xl flex items-center justify-center"><i class="fas fa-trash-can"></i></button>
+                            </div>
                         </div>
                     `;
                 }
             });
         }
 
-        function renderArchive() {
-            const tbody = document.getElementById('archive-list-table');
-            tbody.innerHTML = '';
-            Object.values(appState.orders).filter(o => o.status === 'delivered' || o.status === 'cancelled').sort((a,b) => b.deliveredAt - a.deliveredAt).forEach(o => {
-                const diff = o.deliveredAt && o.outAt ? Math.round((o.deliveredAt - o.outAt) / 60000) : '--';
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="p-4 font-bold">#${o.orderNo}<br><span class="text-xs text-slate-400">${o.customer}</span></td>
-                        <td class="p-4 text-slate-600">${o.driverName}</td>
-                        <td class="p-4 font-black">${o.value} ج.م</td>
-                        <td class="p-4">
-                            <span class="px-2 py-1 rounded-lg text-xs font-black ${o.status === 'delivered' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                                ${o.status === 'delivered' ? 'تم التسليم' : 'ملغي'}
-                            </span>
-                        </td>
-                        <td class="p-4 text-xs font-bold text-slate-500">${diff} دقيقة</td>
-                        <td class="p-4">
-                            ${o.location ? `<a href="${o.location}" target="_blank" class="text-blue-500 hover:underline"><i class="fas fa-map-location-dot"></i> الموقع</a>` : '--'}
-                        </td>
-                    </tr>
+        function renderAdminDrivers() {
+            const list = document.getElementById('drivers-list');
+            list.innerHTML = '';
+            Object.entries(state.drivers).forEach(([id, d]) => {
+                list.innerHTML += `
+                    <div class="bg-white p-4 rounded-3xl border border-slate-100 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl ${d.status === 'online' ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-400'} flex items-center justify-center">
+                                <i class="fas fa-user-ninja"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-black text-sm">${d.name}</h4>
+                                <p class="text-[10px] font-bold text-slate-400">كود: ${d.code} | ${d.status === 'online' ? 'نشط الآن' : 'غير متصل'}</p>
+                            </div>
+                        </div>
+                        <button onclick="deleteDriver('${id}')" class="text-slate-300 hover:text-red-500 p-2"><i class="fas fa-user-xmark"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        function renderReports() {
+            const list = document.getElementById('reports-list');
+            list.innerHTML = '';
+            Object.values(state.orders).filter(o => o.status === 'delivered').sort((a,b) => b.deliveredAt - a.deliveredAt).forEach(o => {
+                list.innerHTML += `
+                    <div class="bg-white p-5 rounded-3xl border border-slate-50">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-black">فاتورة #${o.orderNo}</h4>
+                            <span class="text-green-600 font-black">${o.value} ج.م</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>المندوب: ${o.driverName}</span>
+                            <span>${new Date(o.deliveredAt).toLocaleTimeString('ar-EG')}</span>
+                        </div>
+                        ${o.location ? `
+                            <a href="${o.location}" target="_blank" class="mt-4 block text-center bg-blue-50 text-blue-600 py-2 rounded-xl text-[10px] font-black hover:bg-blue-100 transition">
+                                <i class="fas fa-location-dot ml-1"></i> عرض موقع التسليم على الخريطة
+                            </a>
+                        ` : ''}
+                    </div>
                 `;
             });
         }
 
         function renderDriverTasks() {
-            const container = document.getElementById('driver-tasks-list');
-            if(!container) return;
-            container.innerHTML = '';
-            if(!appState.currentUser) return;
-
-            const myOrders = Object.entries(appState.orders).filter(([id, o]) => o.driverId === appState.currentUser.id && (o.status === 'pending' || o.status === 'out'));
+            const list = document.getElementById('driver-tasks');
+            if(!list || !state.user) return;
+            list.innerHTML = '';
             
-            if(myOrders.length === 0) {
-                container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 font-bold border-2 border-dashed border-slate-200 rounded-[2rem]">لا يوجد طلبات مكلف بها حالياً</div>`;
-                return;
-            }
+            const tasks = Object.entries(state.orders).filter(([id, o]) => o.driverId === state.user.id && (o.status === 'pending' || o.status === 'out'));
+            document.getElementById('task-count').innerText = tasks.length;
 
-            myOrders.forEach(([id, o]) => {
-                container.innerHTML += `
-                    <div class="bg-white p-6 rounded-[2rem] shadow-lg border-2 border-slate-50 relative overflow-hidden transition-all hover:border-blue-200">
-                        <div class="absolute top-0 right-0 w-2 h-full ${o.status === 'pending' ? 'bg-amber-400' : 'bg-blue-600'}"></div>
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="text-2xl font-black">#${o.orderNo}</h4>
-                            <div class="text-2xl font-black text-blue-600">${o.value} <span class="text-xs">ج.م</span></div>
+            tasks.forEach(([id, o]) => {
+                list.innerHTML += `
+                    <div class="bg-white p-6 rounded-[2rem] border-2 border-slate-50 card-shadow">
+                        <div class="flex justify-between items-center mb-5">
+                            <span class="bg-blue-50 text-blue-600 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">${o.status === 'pending' ? 'بانتظار خروجك' : 'قيد التوصيل الآن'}</span>
+                            <span class="text-2xl font-black text-slate-800">${o.value} <small class="text-[10px] text-slate-400">ج.م</small></span>
                         </div>
-                        <div class="space-y-3 mb-6">
-                            <div class="flex items-center gap-3 font-bold text-slate-700 bg-slate-50 p-3 rounded-2xl">
-                                <i class="fas fa-user text-blue-400"></i> ${o.customer}
+                        <div class="space-y-4 mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 text-xs"><i class="fas fa-user"></i></div>
+                                <span class="font-black text-slate-700">${o.customer}</span>
                             </div>
-                            <div class="flex items-center gap-3 font-bold text-slate-700 bg-slate-50 p-3 rounded-2xl">
-                                <i class="fas fa-phone text-green-400"></i> ${o.phone}
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center text-green-500 text-xs"><i class="fas fa-phone"></i></div>
+                                <span class="font-bold text-green-600">${o.phone}</span>
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <a href="tel:${o.phone}" class="flex-1 bg-slate-100 text-slate-700 py-3 rounded-2xl flex items-center justify-center gap-2 font-black active:scale-95 transition">
-                                اتصال <i class="fas fa-phone-volume"></i>
+                            <a href="tel:${o.phone}" class="flex-1 bg-slate-100 text-slate-700 py-4 rounded-2xl flex items-center justify-center gap-2 font-black active:scale-95 transition">
+                                <i class="fas fa-phone-volume text-sm"></i>
                             </a>
-                            <button onclick="finishTask('${id}')" class="flex-[2] bg-blue-600 text-white py-3 rounded-2xl flex items-center justify-center gap-2 font-black shadow-lg shadow-blue-100 active:scale-95 transition">
-                                تم التسليم <i class="fas fa-check-double"></i>
+                            <button onclick="finishOrder('${id}')" class="flex-[3] bg-blue-600 text-white py-4 rounded-2xl flex items-center justify-center gap-2 font-black shadow-lg shadow-blue-100 active:scale-95 transition">
+                                تم التسليم <i class="fas fa-circle-check text-sm"></i>
                             </button>
                         </div>
                     </div>
@@ -498,147 +473,91 @@
             });
         }
 
-        // 5. Authentication & Logic
-        document.getElementById('login-form').addEventListener('submit', e => {
-            e.preventDefault();
-            const code = document.getElementById('login-code').value;
-            const pass = document.getElementById('login-pass').value;
-
-            if(appState.role === 'admin') {
-                if(code === 'admin' && pass === '123') {
-                    loginSuccess('admin', { name: 'المدير العام' });
-                } else {
-                    notify('بيانات المدير غير صحيحة', 'error');
-                }
-            } else {
-                const driverEntry = Object.entries(appState.drivers).find(([id, d]) => d.code === code && d.password === pass);
-                if(driverEntry) {
-                    loginSuccess('driver', { id: driverEntry[0], ...driverEntry[1] });
-                } else {
-                    notify('كود المندوب أو كلمة المرور خطأ', 'error');
-                }
-            }
-        });
-
-        function loginSuccess(role, user) {
-            appState.currentUser = user;
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
-            
-            if(role === 'admin') {
-                document.getElementById('sidebar-admin').classList.remove('hidden', 'md:hidden');
-                document.getElementById('driver-app').classList.add('hidden');
-                showSection('admin-dashboard');
-            } else {
-                document.getElementById('sidebar-admin').classList.add('hidden');
-                document.getElementById('driver-app').classList.remove('hidden');
-                updateDriverAppUI();
-            }
-            notify(`مرحباً بك، ${user.name}`);
-        }
-
-        function logout() {
-            appState.currentUser = null;
-            document.getElementById('main-app').classList.add('hidden');
-            document.getElementById('login-screen').classList.remove('hidden');
-        }
-
-        function updateDriverAppUI() {
-            if(!appState.currentUser) return;
-            const d = appState.currentUser;
-            document.getElementById('curr-driver-name').innerText = d.name;
-            const btn = document.getElementById('btn-toggle-attendance');
-            const statusTxt = document.getElementById('curr-driver-status');
+        function updateDriverProfileUI() {
+            const d = state.user;
+            document.getElementById('d-name-info').innerText = d.name;
+            const btn = document.getElementById('btn-driver-status');
+            const statusTxt = document.getElementById('d-status-text');
 
             if(d.status === 'online') {
-                statusTxt.innerHTML = 'الحالة: <span class="text-green-600">متصل وجاهز للعمل</span>';
-                btn.innerText = 'تسجيل انصراف';
-                btn.className = "px-10 py-4 rounded-2xl font-black text-lg transition-all active:scale-95 shadow-xl bg-red-100 text-red-600 border border-red-200";
+                statusTxt.innerHTML = '<span class="text-green-500"><i class="fas fa-circle mr-1 text-[8px] animate-pulse"></i> أنت الآن نشط وقابل لاستلام الطلبات</span>';
+                btn.innerText = 'تسجيل انصراف (نهاية الدوام)';
+                btn.className = "w-full py-4 rounded-2xl font-black text-lg shadow-xl transition-all active:scale-95 bg-white text-red-500 border-2 border-red-50";
             } else {
-                statusTxt.innerHTML = 'الحالة: <span class="text-slate-400">غير متاح حالياً</span>';
-                btn.innerText = 'تسجيل حضور';
-                btn.className = "px-10 py-4 rounded-2xl font-black text-lg transition-all active:scale-95 shadow-xl bg-blue-600 text-white";
+                statusTxt.innerHTML = '<span class="text-slate-400">أنت الآن غير متصل - لن تصلك طلبات</span>';
+                btn.innerText = 'تسجيل حضور (بدء الدوام)';
+                btn.className = "w-full py-4 rounded-2xl font-black text-lg shadow-xl transition-all active:scale-95 bg-blue-600 text-white";
             }
 
-            btn.onclick = async () => {
+            btn.onclick = () => {
                 const newStatus = d.status === 'online' ? 'offline' : 'online';
-                await db.ref(`drivers/${d.id}`).update({
-                    status: newStatus,
-                    [newStatus === 'online' ? 'lastIn' : 'lastOut']: Date.now()
-                });
-                notify(newStatus === 'online' ? 'تم تسجيل حضورك' : 'تم تسجيل انصرافك');
+                db.ref(`drivers/${d.id}`).update({ status: newStatus, [newStatus === 'online' ? 'lastIn' : 'lastOut']: Date.now() });
+                showToast(newStatus === 'online' ? 'تم بدء الدوام بنجاح' : 'تم إنهاء الدوام');
             };
         }
 
-        // 6. Database Operations
-        document.getElementById('driver-form').addEventListener('submit', async e => {
+        // العمليات
+        document.getElementById('form-add-order').onsubmit = e => {
             e.preventDefault();
-            const d = {
+            const dId = document.getElementById('ord-driver').value;
+            const dr = state.drivers[dId];
+            db.ref('orders').push({
+                orderNo: document.getElementById('ord-no').value,
+                value: document.getElementById('ord-val').value,
+                customer: document.getElementById('ord-cust').value,
+                phone: document.getElementById('ord-phone').value,
+                driverId: dId,
+                driverName: dr.name,
+                status: 'pending',
+                createdAt: Date.now()
+            });
+            e.target.reset();
+            showToast('تم إرسال الطلب للمندوب بنجاح');
+        };
+
+        document.getElementById('form-add-driver').onsubmit = e => {
+            e.preventDefault();
+            db.ref('drivers').push({
                 name: document.getElementById('dr-name').value,
                 code: document.getElementById('dr-code').value,
                 password: document.getElementById('dr-pass').value,
                 phone: document.getElementById('dr-phone').value,
                 status: 'offline',
                 createdAt: Date.now()
-            };
-            await db.ref('drivers').push(d);
+            });
             e.target.reset();
-            notify('تمت إضافة المندوب بنجاح');
-        });
+            showToast('تم إضافة المندوب للفريق');
+        };
 
-        document.getElementById('order-form').addEventListener('submit', async e => {
-            e.preventDefault();
-            const drId = document.getElementById('ord-driver').value;
-            const dr = appState.drivers[drId];
-            const o = {
-                orderNo: document.getElementById('ord-no').value,
-                value: document.getElementById('ord-val').value,
-                customer: document.getElementById('ord-cust').value,
-                phone: document.getElementById('ord-phone').value,
-                driverId: drId,
-                driverName: dr.name,
-                driverPhone: dr.phone,
-                status: 'pending',
-                createdAt: Date.now()
-            };
-            await db.ref('orders').push(o);
-            e.target.reset();
-            notify('تم تسجيل الطلب وإخطار المندوب');
-        });
-
-        async function updateOrderStatus(id, status) {
-            const updates = { status };
-            if(status === 'out') updates.outAt = Date.now();
-            await db.ref(`orders/${id}`).update(updates);
-            notify('تم تحديث حالة الطلب');
+        function updateOrderStatus(id, status) {
+            db.ref(`orders/${id}`).update({ status, outAt: Date.now() });
+            showToast('تم تحديث حالة الأوردر');
         }
 
-        function deleteDriver(id) {
-            if(confirm('حذف المندوب نهائياً؟')) db.ref(`drivers/${id}`).remove();
-        }
-
-        async function finishTask(id) {
-            if(!confirm('هل قمت بتسليم الطلب للعميل فعلياً؟')) return;
-            
-            let location = null;
-            notify('جاري تحديد موقعك لتوثيق التسليم...', 'info');
+        async function finishOrder(id) {
+            if(!confirm('تأكيد تسليم الطلب للعميل؟')) return;
+            let loc = null;
+            showToast('جاري توثيق موقعك الحالي...', 'fa-location-crosshairs');
             
             try {
-                const pos = await new Promise((res, rej) => {
-                    navigator.geolocation.getCurrentPosition(res, rej, { timeout: 10000 });
-                });
-                location = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-            } catch (err) {
-                console.warn("Location error:", err);
-            }
+                const p = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { timeout: 8000 }));
+                loc = `https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;
+            } catch (e) { console.warn(e); }
 
-            await db.ref(`orders/${id}`).update({
-                status: 'delivered',
-                deliveredAt: Date.now(),
-                location: location
-            });
-            notify('ممتاز! تم إنهاء المهمة وتوثيق الموقع');
+            db.ref(`orders/${id}`).update({ status: 'delivered', deliveredAt: Date.now(), location: loc });
+            showToast('تم إنجاز المهمة بنجاح!', 'fa-circle-check');
         }
+
+        function deleteOrder(id) { if(confirm('حذف هذا الطلب؟')) db.ref(`orders/${id}`).remove(); }
+        function deleteDriver(id) { if(confirm('حذف المندوب نهائياً؟')) db.ref(`drivers/${id}`).remove(); }
+        function updateOrderDriversSelect() {
+            const s = document.getElementById('ord-driver');
+            s.innerHTML = '<option value="">-- اختر المندوب --</option>';
+            Object.entries(state.drivers).filter(([id, d]) => d.status === 'online').forEach(([id, d]) => {
+                s.innerHTML += `<option value="${id}">${d.name}</option>`;
+            });
+        }
+        function logout() { location.reload(); }
     </script>
 </body>
 </html>
