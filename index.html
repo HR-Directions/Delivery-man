@@ -259,16 +259,11 @@
 
     <audio id="bell" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-    <!-- Firebase -->
+<!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        const firebaseConfig = {
-            databaseURL: "https://delivery-man-cd27a-default-rtdb.firebaseio.com/",
-            projectId: "delivery-man-cd27a"
-        };
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const firebaseConfig = {
             databaseURL: "https://delivery-man-cd27a-default-rtdb.firebaseio.com/",
             projectId: "delivery-man-cd27a"
@@ -411,8 +406,7 @@
         db.ref('admins').on('value', snap => { state.admins = snap.val() || {}; renderAdminsList(); });
 
         function renderAllAdminViews() { renderStats(); renderAdminOrders(); renderCashierHub(); renderReports(); }
-
-        // --- Admin Views & Logic ---
+          // --- Admin Views & Logic ---
         function renderStats() {
             const obs = Object.values(state.orders);
             document.getElementById('stat-pending').innerText = obs.filter(o => o.status === 'pending').length;
@@ -446,7 +440,8 @@
             } catch(err) { showToast(err.message, 'fa-bug', 'text-red-400'); } 
             finally { btn.classList.remove('disabled-btn'); }
         };
-function renderAdminOrders() {
+
+        function renderAdminOrders() {
             const pendingList = document.getElementById('pending-list');
             const outList = document.getElementById('out-list');
             if(!pendingList || !outList) return;
@@ -537,8 +532,7 @@ function renderAdminOrders() {
                     </div>
                 `;
             });
-        }
-
+            }
         async function collectOrder(id) { 
             try { await db.ref(`orders/${id}`).update({ status: 'collected', collectedAt: Date.now() }); showToast('تم التوريد وإنهاء الأوردر، انتقل للأرشيف', 'fa-check-circle', 'text-green-500'); } catch(e) { showToast('خطأ', 'fa-bug');} 
         }
@@ -608,6 +602,7 @@ function renderAdminOrders() {
             state.taskCount = tasks.length; document.getElementById('task-count').innerText = tasks.length;
 
             if (tasks.length === 0) { list.innerHTML = `<div class="text-center py-16 bg-white rounded-[2rem] border border-dashed border-slate-300"><i class="fas fa-mug-hot text-5xl text-slate-300 mb-4 block"></i><p class="font-bold text-slate-400 text-lg">لا توجد أوردرات بانتظارك حالياً</p></div>`; return; }
+
             tasks.forEach(([id, o]) => {
                 const m = getPayMethod(o.payMethod);
                 list.innerHTML += `
