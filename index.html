@@ -506,7 +506,7 @@
                 
                 let phone = o.phone; if(phone.startsWith('0')) phone = '+2' + phone;
                 const methodLabel = getPayMethod(o.payMethod).label;
-                const msg = `صيدليتنا تتمنى لك دوام الصحة 💊\n\nطلبك رقم *${o.orderNo}* خرج الآن للتوصيل.\nقيمة الفاتورة: *${o.value} ج.م*\nالتحصيل عبر: *${methodLabel}*\n\nالمندوب: *${o.driverName}*\nهاتف المندوب: ${o.driverPhone || 'غير متوفر'}`;
+               const msg = `صيدليتنا تتمنى لك دوام الصحة 💊\n\nطلبك رقم *${o.orderNo}* خرج الآن للتوصيل.\nقيمة الفاتورة: *${o.value} ج.م*\nالتحصيل عبر: *${methodLabel}*\n\nالمندوب: *${o.driverName}*\nهاتف المندوب: ${o.driverPhone || 'غير متوفر'}\n\nويمكنك تتبع طلبك عن طريق هذا اللينك: https://hr-directions.github.io/App-view-/`; 
                 window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`, '_blank');
             } catch(e) { showToast('خطأ بالشبكة', 'fa-bug', 'text-red-500'); }
         }
