@@ -222,6 +222,20 @@
                     <div id="admins-list" class="grid grid-cols-1 md:grid-cols-2 gap-3 pb-10"></div>
                 </section>
                 
+                <section id="sec-admin-webview" class="hidden space-y-6">
+    <div class="bg-white rounded-[2rem] custom-shadow border-t-4 border-t-emerald-500 overflow-hidden flex flex-col" style="height: 80vh;">
+        <div class="p-5 bg-slate-50 border-b border-slate-100 flex items-center gap-3">
+            <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shadow-inner">
+                <i class="fas fa-chart-line text-xl"></i>
+            </div>
+            <div>
+                <h3 class="font-black text-xl text-slate-800">التقرير العام</h3>
+                <p class="text-xs font-bold text-slate-500">عرض التقارير داخل النظام مباشرة</p>
+            </div>
+        </div>
+        <iframe src="https://hr-directions.github.io/Report-home-delivery-/" class="w-full flex-1 border-none bg-slate-50" title="التقرير العام"></iframe>
+    </div>
+                </section>
 <section id="sec-general-report" class="space-y-8">
     <div class="bg-white p-6 md:p-10 rounded-[2rem] custom-shadow border-t-4 border-t-emerald-500 overflow-hidden relative group transition-all duration-300 hover:shadow-xl">
         <!-- خلفية جمالية خفيفة -->
@@ -392,14 +406,7 @@
             const mobileNav = document.getElementById('mobile-nav'), desktopNav = document.getElementById('admin-nav-items');
             mobileNav.innerHTML = ''; desktopNav.innerHTML = '';
 
-            const navs = state.role === 'admin' ? [
-                { id: 'sec-admin-dash', icon: 'fa-chart-pie', label: 'الرئيسية' },
-                { id: 'sec-admin-orders', icon: 'fa-box', label: 'الطلبات' },
-                { id: 'sec-admin-cashier', icon: 'fa-vault', label: 'الكاشير' },
-                { id: 'sec-admin-drivers', icon: 'fa-motorcycle', label: 'المناديب' },
-                { id: 'sec-admin-managers', icon: 'fa-user-shield', label: 'المديرون' },
-                { id: 'sec-admin-reports', icon: 'fa-file-invoice', label: 'الأرشيف' }
-            ] : [{ id: 'sec-driver-dash', icon: 'fa-house-user', label: 'مكتبي' }];
+            
 
             navs.forEach(nav => {
                 mobileNav.innerHTML += `<button onclick="changeSection('${nav.id}')" class="flex flex-col items-center justify-center w-full h-full text-slate-400 nav-btn-${nav.id} transition-all"><i class="fas ${nav.icon} text-2xl mb-1"></i><span class="text-[10px] font-black">${nav.label}</span></button>`;
@@ -418,7 +425,15 @@
             window.scrollTo(0, 0);
         }
 
-        // --- Firebase Listeners ---
+        // --- Firebase Listenconst navs = state.role === 'admin' ? [
+    { id: 'sec-admin-dash', icon: 'fa-chart-pie', label: 'الرئيسية' },
+    { id: 'sec-admin-orders', icon: 'fa-box', label: 'الطلبات' },
+    { id: 'sec-admin-cashier', icon: 'fa-vault', label: 'الكاشير' },
+    { id: 'sec-admin-drivers', icon: 'fa-motorcycle', label: 'المناديب' },
+    { id: 'sec-admin-managers', icon: 'fa-user-shield', label: 'المديرون' },
+    { id: 'sec-admin-reports', icon: 'fa-file-invoice', label: 'الأرشيف' },
+    { id: 'sec-admin-webview', icon: 'fa-chart-line', label: 'التقارير' } // هذا هو الزر الجديد
+] : [{ id: 'sec-driver-dash', icon: 'fa-house-user', label: 'مكتبي' }];ers ---
         db.ref('drivers').on('value', snap => {
             state.drivers = snap.val() || {};
             if(state.role === 'driver' && state.user) {
