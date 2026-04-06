@@ -1,32 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-  <defs>
-    <linearGradient id="bgGrad" x1="80%" y1="0%" x2="20%" y2="100%">
-      <stop offset="0%" stop-color="#6977ff" />
-      <stop offset="100%" stop-color="#3a51f2" />
-    </linearGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<!-- اللون الأزرق الموحد للشعار -->
+<g fill="#2b44af">
+<!-- خطوط السرعة في الخلف -->
+<rect x="90" y="200" width="45" height="10" rx="5" />
+<rect x="100" y="225" width="35" height="10" rx="5" />
+<rect x="105" y="250" width="30" height="10" rx="5" />
+  <!-- صندوق التوصيل -->
+<rect x="145" y="190" width="70" height="65" rx="8" />
 
-  <rect x="75" y="90" width="250" height="250" rx="70" fill="#1e2985" opacity="0.15" transform="rotate(-15 200 200)" />
-  
-  <rect x="75" y="75" width="250" height="250" rx="70" fill="url(#bgGrad)" transform="rotate(-15 200 200)" />
+<!-- جسم السكوتر والقاعدة -->
+<path d="M175,255 L160,330 C155,350 170,365 190,365 L210,365 C220,330 250,310 280,310 L350,310 C380,310 400,330 415,365 L430,365 C450,365 470,350 460,320 L400,220 C390,205 370,200 355,210 L315,240 Z" />
 
-  <path d="M 123 220 A 24 24 0 1 1 123 240" fill="none" stroke="white" stroke-width="14" stroke-linecap="round"/>
-  <circle cx="145" cy="230" r="7" fill="white"/>
-  <line x1="145" y1="230" x2="115" y2="230" stroke="white" stroke-width="10" stroke-linecap="round"/>
+<!-- السائق (الرأس والخوذة) -->
+<circle cx="290" cy="155" r="30" />
 
-  <path d="M 267 251 A 24 24 0 1 1 276 242" fill="none" stroke="white" stroke-width="14" stroke-linecap="round"/>
-  <circle cx="255" cy="230" r="7" fill="white"/>
-  <line x1="255" y1="230" x2="272" y2="247" stroke="white" stroke-width="10" stroke-linecap="round"/>
+<!-- جسم السائق (الجذع والذراعين) -->
+<path d="M290,185 C250,185 220,230 215,280 L255,280 C260,240 280,225 310,225 L335,225 L320,185 Z" />
+<path d="M310,225 L350,210 L360,235 L320,250 Z" />
 
-  <path d="M 145 230 L 185 230 L 215 160" fill="none" stroke="white" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
-  
-  <path d="M 255 230 L 215 145" fill="none" stroke="white" stroke-width="16" stroke-linecap="round"/>
-  
-  <path d="M 135 165 L 195 165" fill="none" stroke="white" stroke-width="22" stroke-linecap="round"/>
-  
-  <path d="M 175 165 L 210 165 L 195 200 Z" fill="white" stroke="white" stroke-width="5" stroke-linejoin="round"/>
-  
-  <path d="M 215 145 L 185 145" fill="none" stroke="white" stroke-width="12" stroke-linecap="round"/>
-  
-  <rect x="212" y="135" width="22" height="20" rx="10" fill="white"/>
+<!-- العجلة الخلفية -->
+<path d="M225,410 A 45 45 0 1 1 225,320 A 45 45 0 1 1 225,410 Z M225,385 A 20 20 0 1 0 225,345 A 20 20 0 1 0 225,385 Z" fill-rule="evenodd" />
+
+<!-- العجلة الأمامية -->
+<path d="M405,410 A 45 45 0 1 1 405,320 A 45 45 0 1 1 405,410 Z M405,385 A 20 20 0 1 0 405,345 A 20 20 0 1 0 405,385 Z" fill-rule="evenodd" />
+
+<!-- الظل الأرضي السفلي -->
+<rect x="145" y="430" width="300" height="6" rx="3" opacity="0.4" />
+  </g>
 </svg>
