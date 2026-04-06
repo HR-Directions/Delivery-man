@@ -1,43 +1,52 @@
-<svg id="delivery-logo" width="300" height="300" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Background Circle (Optional aesthetic) -->
-            <circle cx="250" cy="250" r="220" fill="#e0f2fe" opacity="0.5"></circle>
-            
-            <!-- Speed Lines (Speed Impression) -->
-            <g id="speed-lines">
-                <path d="ID1" stroke="#7dd3fc" stroke-width="12" stroke-linecap="round">
-                    <animate attributeName="stroke-dashoffset" from="0" to="20" dur="0.5s" repeatCount="indefinite"></animate>
-                </path>
-                <path d="M110 240 L20 240" stroke="#38bdf8" stroke-width="15" stroke-linecap="round"></path>
-                <path d="M120 280 L50 280" stroke="#0ea5e9" stroke-width="12" stroke-linecap="round"></path>
-            </g>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<!-- Definitions for Gradients and Shadows -->
+<defs>
+<linearGradient id="mainBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#00B4DB;stop-opacity:1" />
+<stop offset="100%" style="stop-color:#0083B0;stop-opacity:1" />
+</linearGradient>
+<filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+<blur stdDeviation="5" />
+</filter>
+</defs>
+   <!-- Background Circle (Soft Light Blue) -->
+<circle cx="256" cy="256" r="240" fill="#E1F5FE" opacity="0.5" />
 
-            <!-- Motorcycle Body -->
-            <g id="motorcycle">
-                <!-- Back Wheel -->
-                <circle cx="180" cy="350" r="45" stroke="#075985" stroke-width="12" fill="white"></circle>
-                <circle cx="180" cy="350" r="15" fill="#075985"></circle>
-                
-                <!-- Front Wheel -->
-                <circle cx="380" cy="350" r="45" stroke="#075985" stroke-width="12" fill="white"></circle>
-                <circle cx="380" cy="350" r="15" fill="#075985"></circle>
+<!-- Speed Lines (Representing Extreme Velocity) -->
+<g stroke="#00B4DB" stroke-width="8" stroke-linecap="round">
+    <line x1="50" y1="200" x2="150" y2="200" opacity="0.3" />
+    <line x1="30" y1="256" x2="130" y2="256" opacity="0.6" />
+    <line x1="50" y1="312" x2="150" y2="312" opacity="0.3" />
+</g>
 
-                <!-- Chassis / Frame -->
-                <path d="M180 350 L240 250 L360 250 L380 350" stroke="#0284c7" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"></path>
-                
-                <!-- Seat and Body -->
-                <path d="M200 250 Q280 210 350 250" fill="#0ea5e9"></path>
-                
-                <!-- Delivery Box -->
-                <rect x="150" y="180" width="80" height="70" rx="8" fill="#0369a1"></rect>
-                <path d="M150 215 H230" stroke="white" stroke-width="4" opacity="0.3"></path>
-                
-                <!-- Handlebars -->
-                <path d="M340 250 L365 200 L390 205" stroke="#075985" stroke-width="10" stroke-linecap="round"></path>
-                
-                <!-- Wind Shield / Speed Effect on Front -->
-                <path d="M370 200 Q410 200 420 230" stroke="#7dd3fc" stroke-width="8" stroke-linecap="round" fill="none"></path>
-            </g>
+<!-- The Super Delivery Symbol (Capsule/Rocket Hybrid) -->
+<g transform="translate(140, 160) rotate(15)">
+    <!-- Outer Capsule Frame -->
+    <rect x="0" y="40" width="240" height="100" rx="50" fill="url(#mainBlue)" />
+    
+    <!-- Medical Cross (Pharmacy Symbol) -->
+    <path d="M120 60 V120 M90 90 H150" stroke="white" stroke-width="20" stroke-linecap="round" />
+    
+    <!-- Super Cape (Symbolizing the "Super" Power) -->
+    <path d="M40 50 Q-60 0 -80 120 Q-20 100 40 90" fill="#0288D1">
+        <animateTransform 
+            attributeName="transform" 
+            type="skewY" 
+            values="0;5;0" 
+            dur="1s" 
+            repeatCount="indefinite" />
+    </path>
 
-            <!-- Text (Optional in Logo) -->
-            <text x="250" y="460" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="#0369a1" text-anchor="middle">FAST DELIVERY</text>
-        </svg>
+    <!-- Speed Motion Trails -->
+    <path d="M-20 60 H-80 M-30 90 H-110 M-20 120 H-80" stroke="#00B4DB" stroke-width="6" stroke-linecap="round" />
+</g>
+
+<!-- Modern Typography (Conceptual Placement) -->
+<text x="256" y="450" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#0083B0" text-anchor="middle">
+    PHARMA DASH
+</text>
+<text x="256" y="480" font-family="Arial, sans-serif" font-size="16" fill="#00B4DB" text-anchor="middle">
+    SUPERFAST DELIVERY
+</text>         
+
+</svg>
