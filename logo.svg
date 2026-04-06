@@ -1,9 +1,32 @@
 
-    <svg width='200' height='200' xmlns='http://www.w3.org/2000/svg'>
-        <rect width='100%' height='100%' fill='lightblue' />
-        <circle cx='100' cy='100' r='80' fill='blue' />
-        <text x='100' y='120' font-family='Arial' font-size='20' fill='white' text-anchor='middle'>Fast Delivery</text>
-        <polygon points='100,30 90,40 110,40' fill='white' />
-        <line x1='100' y1='40' x2='100' y2='10' stroke='white' stroke-width='2' />
-    </svg>
+    BEGIN
+        CREATE SVG File 'motorcycle_delivery_logo.svg'
+        SET SVG Width = '200'
+        SET SVG Height = '100'
+
+        BEGIN GROUP 'Logo Background'
+            SET Background Color = 'white'
+            DRAW RECTANGLE at (0,0) with Width = '200' and Height = '100'
+        END GROUP
+
+        BEGIN GROUP 'Motorcycle Icon'
+            DEFINE Motorcycle Shape
+                DRAW CIRCLE for Wheel 1 at (50,70) with Radius = '10'
+                DRAW CIRCLE for Wheel 2 at (150,70) with Radius = '10'
+                DRAW RECTANGLE for Body at (30,50) with Width = '140' and Height = '20'
+                DRAW PATH for Handlebar
+            END DEFINE
+            PLACE Motorcycle Shape at (50,30)
+        END GROUP
+
+        BEGIN GROUP 'Text'
+            SET FONT = 'Arial'
+            SET FONT SIZE = '20'
+            SET TEXT COLOR = 'black'
+            ADD TEXT 'Delivery' at (70,40)
+            ADD TEXT 'on Motorcycle' at (70,60)
+        END GROUP
+
+        SAVE SVG File
+    END
     
