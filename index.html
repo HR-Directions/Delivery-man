@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -40,7 +39,8 @@
         <div class="w-full max-w-sm bg-white p-8 rounded-[2rem] custom-shadow text-center relative overflow-hidden">
             <div class="mb-8">
                 <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-3xl rotate-12 flex items-center justify-center text-white mx-auto shadow-xl shadow-blue-200 mb-6 transition-transform hover:rotate-0">
-                    <i class="fas fa-truck-medical text-3xl -rotate-12 hover:rotate-0 transition-transform"></i>
+                    <!-- تم تغيير الأيقونة هنا إلى موتوسيكل -->
+                    <i class="fas fa-motorcycle text-3xl -rotate-12 hover:rotate-0 transition-transform"></i>
                 </div>
                 <h1 class="text-3xl font-black text-slate-800"> pharmacy pro v1.0</h1>
                 <p class="text-slate-400 font-bold mt-2 text-sm">نظام إدارة التوصيل</p>
@@ -222,51 +222,21 @@
                     <div id="admins-list" class="grid grid-cols-1 md:grid-cols-2 gap-3 pb-10"></div>
                 </section>
                 
+                <!-- 6. Web View Reports (الزر الجديد الخاص بالتقارير) -->
                 <section id="sec-admin-webview" class="hidden space-y-6">
-    <div class="bg-white rounded-[2rem] custom-shadow border-t-4 border-t-emerald-500 overflow-hidden flex flex-col" style="height: 80vh;">
-        <div class="p-5 bg-slate-50 border-b border-slate-100 flex items-center gap-3">
-            <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shadow-inner">
-                <i class="fas fa-chart-line text-xl"></i>
-            </div>
-            <div>
-                <h3 class="font-black text-xl text-slate-800">التقرير العام</h3>
-                <p class="text-xs font-bold text-slate-500">عرض التقارير داخل النظام مباشرة</p>
-            </div>
-        </div>
-        <iframe src="https://hr-directions.github.io/Report-home-delivery-/" class="w-full flex-1 border-none bg-slate-50" title="التقرير العام"></iframe>
-    </div>
+                    <div class="bg-white rounded-[2rem] custom-shadow border-t-4 border-t-emerald-500 overflow-hidden flex flex-col" style="height: 80vh;">
+                        <div class="p-5 bg-slate-50 border-b border-slate-100 flex items-center gap-3">
+                            <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center shadow-inner">
+                                <i class="fas fa-chart-line text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-black text-xl text-slate-800">التقرير العام</h3>
+                                <p class="text-xs font-bold text-slate-500">عرض التقارير والتحليلات داخل النظام مباشرة</p>
+                            </div>
+                        </div>
+                        <iframe src="https://hr-directions.github.io/Report-home-delivery-/" class="w-full flex-1 border-none bg-slate-50" title="التقرير العام"></iframe>
+                    </div>
                 </section>
-<section id="sec-general-report" class="space-y-8">
-    <div class="bg-white p-6 md:p-10 rounded-[2rem] custom-shadow border-t-4 border-t-emerald-500 overflow-hidden relative group transition-all duration-300 hover:shadow-xl">
-        <!-- خلفية جمالية خفيفة -->
-        <div class="absolute -top-10 -left-10 w-32 h-32 bg-emerald-50 rounded-full blur-3xl opacity-50 group-hover:bg-emerald-100 transition-colors"></div>
-        
-        <div class="relative flex flex-col md:flex-row items-center justify-between gap-6">
-            <div class="flex items-center gap-5">
-                <!-- أيقونة التقرير -->
-                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0 shadow-inner">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="Sets-9 17 9 17h-1M9 8h10M9 12h10M4 4v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6c-1.1 0-2 .9-2 2z" />
-                    </svg>
-                </div>
-                
-                <div>
-                    <h3 class="font-black text-2xl text-slate-800 mb-1">التقرير العام</h3>
-                    <p class="text-slate-500 font-bold text-sm">عرض وتحليل تقارير التوصيل المنزلي بشكل شامل</p>
-                </div>
-            </div>
-
-            <a href="https://hr-directions.github.io/Report-home-delivery-/" 
-               target="_blank"
-               class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-4 rounded-2xl font-black flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-emerald-200">
-                <span>فتح التقرير الآن</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-            </a>
-        </div>
-    </div>
-</section>
 
             </div>
 
@@ -406,7 +376,15 @@
             const mobileNav = document.getElementById('mobile-nav'), desktopNav = document.getElementById('admin-nav-items');
             mobileNav.innerHTML = ''; desktopNav.innerHTML = '';
 
-            
+            const navs = state.role === 'admin' ? [
+                { id: 'sec-admin-dash', icon: 'fa-chart-pie', label: 'الرئيسية' },
+                { id: 'sec-admin-orders', icon: 'fa-box', label: 'الطلبات' },
+                { id: 'sec-admin-cashier', icon: 'fa-vault', label: 'الكاشير' },
+                { id: 'sec-admin-drivers', icon: 'fa-motorcycle', label: 'المناديب' },
+                { id: 'sec-admin-managers', icon: 'fa-user-shield', label: 'المديرون' },
+                { id: 'sec-admin-reports', icon: 'fa-file-invoice', label: 'الأرشيف' },
+                { id: 'sec-admin-webview', icon: 'fa-chart-line', label: 'التقارير' } // الزر الجديد للـ Web View المدمج
+            ] : [{ id: 'sec-driver-dash', icon: 'fa-house-user', label: 'مكتبي' }];
 
             navs.forEach(nav => {
                 mobileNav.innerHTML += `<button onclick="changeSection('${nav.id}')" class="flex flex-col items-center justify-center w-full h-full text-slate-400 nav-btn-${nav.id} transition-all"><i class="fas ${nav.icon} text-2xl mb-1"></i><span class="text-[10px] font-black">${nav.label}</span></button>`;
@@ -425,15 +403,7 @@
             window.scrollTo(0, 0);
         }
 
-        // --- Firebase Listenconst navs = state.role === 'admin' ? [
-    { id: 'sec-admin-dash', icon: 'fa-chart-pie', label: 'الرئيسية' },
-    { id: 'sec-admin-orders', icon: 'fa-box', label: 'الطلبات' },
-    { id: 'sec-admin-cashier', icon: 'fa-vault', label: 'الكاشير' },
-    { id: 'sec-admin-drivers', icon: 'fa-motorcycle', label: 'المناديب' },
-    { id: 'sec-admin-managers', icon: 'fa-user-shield', label: 'المديرون' },
-    { id: 'sec-admin-reports', icon: 'fa-file-invoice', label: 'الأرشيف' },
-    { id: 'sec-admin-webview', icon: 'fa-chart-line', label: 'التقارير' } // هذا هو الزر الجديد
-] : [{ id: 'sec-driver-dash', icon: 'fa-house-user', label: 'مكتبي' }];ers ---
+        // --- Firebase Listeners ---
         db.ref('drivers').on('value', snap => {
             state.drivers = snap.val() || {};
             if(state.role === 'driver' && state.user) {
@@ -712,5 +682,5 @@
         function deleteData(path) { if(confirm('متأكد من الحذف النهائي؟')) db.ref(path).remove().catch(e => showToast('خطأ','fa-bug','text-red-500')); }
 
     </script>
-</body>
+</body>       
 </html>
